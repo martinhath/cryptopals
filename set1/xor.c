@@ -7,15 +7,14 @@ int main(int argc, char* argv[]){
   first = argv[1];
   second = argv[2];
   n = 0;
-  while(*first++ ||  *second++){
+  while(*first++ || *second++){
     n++;
   }
   first = argv[1];
   second = argv[2];
   for(i = 0; i < n; i++){
     printf("%02x", first[i]^second[i]);
-    printf("\n\t%x  %x\n", first[i], second[i]);
+    printf("\t%02x  %02x\n", first[i], second[i]);
   }
-  printf("\n");
-  
+  return 0;
 }
