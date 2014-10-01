@@ -121,6 +121,7 @@ unsigned char* byteatobase64a(unsigned char* array, size_t n, char* b64)
 
 /**
  * XORs together two arrays, assumed to be length n
+ *
  * @param First array
  * @param Second array
  * @param Array to store the XOR in
@@ -134,5 +135,44 @@ unsigned char*  xor_array(unsigned char* a1, unsigned char* a2, unsigned char* t
         target[i] = a1[i] ^ a2[i];
     }
     return target;
+}
+
+/**
+ * Computes the hamming distance of the two chars
+ * 
+ * @param First char
+ * @param Second char
+ * @return Hamming distance
+ */
+static unsigned char BITS[8] = {1,2,4,8,16,32,64,128};
+int hamming_char(unsigned char c1, unsigned char c2)
+{
+    int i, hamming; 
+    hamming = 0;
+    c1 ^= c2;
+    for (i = 0; i < 8; i++){
+        hamming += ((c1 & BITS[i]) == BITS[i]);
+    }
+    return hamming;
+}
+
+/**
+ * Computes the hamming distance of the two strings
+ * s1 and s2 of length n. 
+ *
+ * @param First string
+ * @param Second string
+ * @param Length of both strings
+ * @return Hamming distance
+ */
+int hamming(unsigned char* s1, unsigned char* s2, size_t n)
+{
+    int i, hamming; 
+    hamming = 0;
+    for (i = 0; i < n; i++)
+    {
+        hamming += hamming_char(s1[i], s2[i]);
+    }
+    return hamming;
 }
 
