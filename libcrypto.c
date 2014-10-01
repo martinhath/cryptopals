@@ -119,4 +119,20 @@ unsigned char* byteatobase64a(unsigned char* array, size_t n, char* b64)
     return b64;
 }
 
+/**
+ * XORs together two arrays, assumed to be length n
+ * @param First array
+ * @param Second array
+ * @param Array to store the XOR in
+ * @return Pointer to target array
+ */
+unsigned char*  xor_array(unsigned char* a1, unsigned char* a2, unsigned char* target, size_t n)
+{
+    size_t i;
+    for(i = 0; i < n; i++)
+    {
+        target[i] = a1[i] ^ a2[i];
+    }
+    return target;
+}
 
