@@ -9,7 +9,8 @@ size_t str_to_bytes(const char*, unsigned char*, size_t);
 
 char numtobase64(size_t);
 
-unsigned char* byteatobase64a(unsigned char*, size_t, char*);
+char* byteatobase64a(unsigned char*, size_t, char*);
+unsigned char* base64tobstring(char*, size_t, unsigned char*);
 
 unsigned char* xor_array(unsigned char*, unsigned char*, unsigned char*, size_t);
 
