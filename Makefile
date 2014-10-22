@@ -1,10 +1,11 @@
 CC = gcc
 FLAGS = -Wall -Wextra -pedantic -g -O
-LIB = libcrypto.c
+LIB = src/libcrypto.c
+CHALLENGES = 3 6
 
 all:
+	echo "Huheue"
 	
-6:
-	$(CC) $(FLAGS) $(LIB) -o c6 challenge6.c 
-
+$(CHALLENGES):
+	$(CC) $(FLAGS) $(LIB) -o bin/challenge$@ src/challenge$@.c 
 
