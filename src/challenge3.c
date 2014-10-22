@@ -52,6 +52,10 @@ int rate_string(unsigned char* str, size_t n)
     score = 0;
     for (i = 0; i < n; i++)
     {
+        if(str[i] > 127){
+            score -= 5;
+            continue;
+        }
         switch (str[i])
         {
         case ' ':
