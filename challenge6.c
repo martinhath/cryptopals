@@ -17,7 +17,7 @@ int main()
     i = read_input(input);
     size = 3 * i / 4;
     keysize = i - 1;
-    bstring = calloc(sizeof(unsigned char) * size, 0);
+    bstring = calloc(size, sizeof(unsigned char));
     base64tobstring(input, i, bstring);
     /* For each KEYSIZE, take the first KEYSIZE worth of bytes,
      * and the second KEYSIZE worth of bytes, and find the edit
@@ -26,34 +26,30 @@ int main()
      * distance is probably the key. You could proceed perhaps
      * with the smallest 2-3 KEYSIZE values. Or take 4 KEYSIZE
      * blocks instead of 2 and average the distances.*/
-    keysize = (1+find_keysize(bstring)) / 2;
-    printf("bstring\n");
-    for (i = 0; i < size; i++) {
-        if (i % 20 == 0 && i != 0) printf("\n");
-        printf("%.2x ", bstring[i]);
-    }
-    printf("\nEND bstring END\n");
+    keysize = find_keysize(bstring);
+    /* Resize the size of bstring so its a multiple
+     * of the key size.*/
+    j = (size / keysize + 1) * keysize - 1;
+    bstring = realloc(bstring, j);
+    for (i = size; i < j; i++)
+        bstring[i] = 0;
+    size = j;
     /* Now that you probably know the KEYSIZE: break the
      * ciphertext into blocks of KEYSIZE length.*/
     num_trans = size / keysize + 1;
-    printf("size: %d\tkeysize:%d\tnum_trans:%d\n", size, keysize, num_trans);
-    printf("%d", bstring);
-    printf("%s\n", bstring);
-    splitstrings = calloc(sizeof(unsigned char *) * num_trans, 0);
-    printf("%d", splitstrings);
-    printf("%s\n", bstring);
+    splitstrings = calloc(num_trans, sizeof(unsigned char *));
     for (i = 0; i < num_trans; i++) {
         splitstrings[i] = bstring + i * keysize;
-        for (j = 0; j < keysize; j++)
-            printf("%.2x ", splitstrings[i][j]);
-        printf("\n");
+        /* for (j = 0; j < keysize; j++)*/
+        /* printf("%.2x ", splitstrings[i][j]);*/
+        /* printf("\n");*/
     }
     /* Now transpose the blocks: make a block that is the first
      * byte of every block, and a block that is the second byte
      * of every block, and so on.*/
-    tstrings = calloc(sizeof(unsigned char **) * keysize, 0);
+    tstrings = calloc(sizeof(unsigned char *) * keysize, 0);
     for (i = 0; i < keysize; i++) {
-        tstrings[i] = malloc(sizeof(unsigned char *) * num_trans);
+        tstrings[i] = malloc(sizeof(unsigned char) * num_trans);
         for (j = 0; j < num_trans; j++) {
             tstrings[i][j] = splitstrings[j][i];
             printf("%.2x ", tstrings[i][j]);
@@ -92,7 +88,7 @@ int find_keysize(unsigned char *bstring)
             keysize_cand = keysize;
         }
     }
-    printf("%s%d\n", "Probable keysize: ", keysize_cand);
     return keysize_cand;
 }
+
 
