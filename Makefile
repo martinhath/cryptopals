@@ -1,5 +1,5 @@
 CC = gcc
-FLAGS = -Wall -g 
+FLAGS = -Wall -Wextra -pedantic -g -O
 LIB = libcrypto.c
 
 all:

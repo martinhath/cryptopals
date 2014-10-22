@@ -125,7 +125,8 @@ size_t base64tonum(char c)
  */
 char* byteatobase64a(unsigned char* array, size_t n, char* b64)
 {
-    int tmp, i, j;
+    size_t i;
+    int tmp, j;
     for (i = 0; i < n; i += 3)
     {
         tmp = (array[i] << 16) + (array[i + 1] << 8) + array[i + 2];
@@ -148,8 +149,8 @@ char* byteatobase64a(unsigned char* array, size_t n, char* b64)
  */
 unsigned char* base64tobstring(char* b64string, size_t n, unsigned char* array)
 {
-    int i, j, tmp;
-    int index, num;
+    size_t i, j;
+    int index, num, tmp;
     for (i = 0; i < n; i += 4)
     {
         tmp = (base64tonum(b64string[i]) << 18) + (base64tonum(b64string[i + 1]) << 12)
@@ -193,7 +194,8 @@ unsigned char*  xor_array(unsigned char* a1, unsigned char* a2, unsigned char* t
  */
 int hamming(unsigned char* s1, unsigned char* s2, size_t n)
 {
-    int i, hamming;
+    size_t i;
+    int hamming;
     hamming = 0;
     for (i = 0; i < n; i++)
     {
@@ -221,9 +223,4 @@ int hamming_char(unsigned char c1, unsigned char c2)
     }
     return hamming;
 }
-
-
-
-
-
 
