@@ -52,7 +52,7 @@ int main()
         tstrings[i] = malloc(sizeof(unsigned char) * num_trans);
         for (j = 0; j < num_trans; j++) {
             tstrings[i][j] = splitstrings[j][i];
-            printf("%.2x ", tstrings[i][j]);
+            printf("%.2x", tstrings[i][j]);
         }
         printf("\n");
     }

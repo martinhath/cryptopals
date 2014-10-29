@@ -14,6 +14,8 @@ unsigned char* base64tobstring(char*, size_t, unsigned char*);
 
 unsigned char* xor_array(unsigned char*, unsigned char*, unsigned char*, size_t);
 
+int decrypt_repeat_xor(unsigned char*, unsigned char*, size_t n);
+
 int hamming(unsigned char*, unsigned char*, size_t);
 int hamming_char(unsigned char, unsigned char);
 

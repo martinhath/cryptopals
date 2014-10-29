@@ -15,6 +15,32 @@
 
 
 /**
+ * Decrypts a repeated XOR string with the supplied key.
+ * The encrypted string will be destroyed, and replaced
+ * with the resulting string.
+ * Both strings are assumed to be null-terminated.
+ *
+ * @param Encrypted key.
+ * @param Key
+ * @param Length of string
+ * @param 0 on success, any other value on failure.
+ */
+int decrypt_repeat_xor(unsigned char *string, unsigned char *key, size_t n)
+{
+    int i;
+    size_t ksize;
+    ksize = strlen(key);
+    i = 0;
+    while (n --> 0) {
+        *string ^= key[i++];
+        string++;
+        if (i >= ksize)
+            i = 0;
+    }
+    return 0;
+}
+
+/**
  * Converts a single char to a byte.
  * @param Char to be converted
  * @return Converted char
@@ -48,12 +74,13 @@ unsigned char str_to_byte(const char *string)
  * Convert a string to an array of the bytes which are
  * making up the string.
  *
- * For instance, the string "a068" should return the
- * array {160, 104}.
+ * For instance, the string "a068" should insert the
+ * array {160, 104} in target.
  *
  * @param The string to read from
- * @param The target array. This is assumed to be large enough
- * (that is, size >= (size(string)+1)/2)
+ * @param The target array.
+ * @param The length of string. This is assumed to be large enough
+ * (that is, n >= (size(string)+1)/2)
  * @return The number of bytes written (since you could
  * potentially write '\0', thus terminating the string).
  */
@@ -61,19 +88,17 @@ size_t str_to_bytes(const char *string, unsigned char *target, size_t n)
 {
     int i;
     char *str = NULL;
-
-    if (n % 2 != 0)
-    {
+    if (n % 2 != 0) {
         str = malloc(sizeof(char) * (n + 1));
         str[0] = '0';
         strncpy(str + 1, string, n);
     }
     i = 0;
-    while (string[i] && string[i + 1])
-    {
+    while (string[i] && string[i + 1]) {
         target[i / 2] = str_to_byte(string + i);
         i += 2;
     }
+    free(str);
     return i / 2;
 }
 
@@ -123,17 +148,14 @@ size_t base64tonum(char c)
  * be of size >= ceil(len/3)*4.
  * @return Pointer to the base64 array
  */
-char* byteatobase64a(unsigned char* array, size_t n, char* b64)
+char *byteatobase64a(unsigned char *array, size_t n, char *b64)
 {
     size_t i;
     int tmp, j;
-    for (i = 0; i < n; i += 3)
-    {
+    for (i = 0; i < n; i += 3) {
         tmp = (array[i] << 16) + (array[i + 1] << 8) + array[i + 2];
         for (j = 0; j < 4; j++)
-        {
             b64[j + (4 * i) / 3] = numtobase64((tmp >> (18 - j * 6)) & 63);
-        }
     }
     return b64;
 }
@@ -147,16 +169,14 @@ char* byteatobase64a(unsigned char* array, size_t n, char* b64)
  * Size is assumed to be >= 3*strlen(b64)/4
  * @return Pointer to the target array
  */
-unsigned char* base64tobstring(char* b64string, size_t n, unsigned char* array)
+unsigned char *base64tobstring(char *b64string, size_t n, unsigned char *array)
 {
     size_t i, j;
     int index, num, tmp;
-    for (i = 0; i < n; i += 4)
-    {
+    for (i = 0; i < n; i += 4) {
         tmp = (base64tonum(b64string[i]) << 18) + (base64tonum(b64string[i + 1]) << 12)
               + (base64tonum(b64string[i + 2]) << 6) + (base64tonum(b64string[i + 3]));
-        for (j = 0; j < 3; j++)
-        {
+        for (j = 0; j < 3; j++) {
             index = j + (3 * i) / 4;
             num = (tmp >> (16 - j * 8) & 255);
             array[index] = num;
@@ -173,13 +193,11 @@ unsigned char* base64tobstring(char* b64string, size_t n, unsigned char* array)
  * @param Array to store the XOR in
  * @return Pointer to target array
  */
-unsigned char*  xor_array(unsigned char* a1, unsigned char* a2, unsigned char* target, size_t n)
+unsigned char  *xor_array(unsigned char *a1, unsigned char *a2, unsigned char *target, size_t n)
 {
     size_t i;
     for (i = 0; i < n; i++)
-    {
         target[i] = a1[i] ^ a2[i];
-    }
     return target;
 }
 
@@ -192,15 +210,13 @@ unsigned char*  xor_array(unsigned char* a1, unsigned char* a2, unsigned char* t
  * @param Length of both strings
  * @return Hamming distance
  */
-int hamming(unsigned char* s1, unsigned char* s2, size_t n)
+int hamming(unsigned char *s1, unsigned char *s2, size_t n)
 {
     size_t i;
     int hamming;
     hamming = 0;
     for (i = 0; i < n; i++)
-    {
         hamming += hamming_char(s1[i], s2[i]);
-    }
     return hamming;
 }
 
@@ -218,9 +234,10 @@ int hamming_char(unsigned char c1, unsigned char c2)
     hamming = 0;
     c1 ^= c2;
     for (i = 0; i < 8; i++)
-    {
         hamming += ((c1 & BITS[i]) == BITS[i]);
-    }
     return hamming;
 }
+
+
+
 

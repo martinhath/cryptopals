@@ -43,7 +43,12 @@ int main()
     }
     printf("Score: %d\t",  max_score);
     printf("Key: %d\t\t", key);
-    printf("[%s]\n", xor_bytes);
+    printf("\nRESULT:\n");
+    for(j = 0;j < i; j++){
+        printf("%c", xor_bytes[j]);
+    }
+    /*printf("[%s]\n", xor_bytes);*/
+    printf("\nEND RESULT\n");
 }
 
 int rate_string(unsigned char* str, size_t n)
@@ -53,7 +58,7 @@ int rate_string(unsigned char* str, size_t n)
     for (i = 0; i < n; i++)
     {
         if(str[i] > 127){
-            score -= 5;
+            score -= 0;
             continue;
         }
         switch (str[i])
