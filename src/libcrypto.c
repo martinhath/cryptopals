@@ -15,10 +15,10 @@
 
 
 /**
- * Breaks single character xor encoding of the 
+ * Breaks single character xor encoding of the
  * supplied string. Brute force, trying every
- * of the 256 chars. 
- * 
+ * of the 256 chars.
+ *
  * @param Encoded string
  * @param Length of the string
  * @return Most likely key
@@ -28,18 +28,13 @@ unsigned char break_singlechar_xor(const unsigned char *string, size_t n)
     unsigned char key, chr, *xor_bytes;
     unsigned int i;
     int try_score, max_score;
-
     xor_bytes = malloc(n * sizeof(unsigned char));
     key = 0;
     max_score = 0;
-    for (chr = 0; chr != 255; chr++)
-    {
+    for (chr = 0; chr != 255; chr++) {
         for (i = 0; i < n; i++)
-        {
             xor_bytes[i] = string[i] ^ chr;
-        }
-        if ((try_score = rate_string(xor_bytes, n)) > max_score)
-        {
+        if ((try_score = rate_string(xor_bytes, n)) > max_score) {
             key = chr;
             max_score = try_score;
         }
@@ -56,15 +51,13 @@ unsigned char break_singlechar_xor(const unsigned char *string, size_t n)
  * @param Length of string
  * @return Rating
  */
-static int rate_string(unsigned char* str, size_t n)
+static int rate_string(unsigned char *str, size_t n)
 {
     unsigned int i;
     int score;
     score = 0;
-    for (i = 0; i < n; i++)
-    {
-        switch (str[i])
-        {
+    for (i = 0; i < n; i++) {
+        switch (str[i]) {
         case ' ':
         case 'a':
         case 'e':
@@ -96,9 +89,9 @@ int decrypt_repeat_xor(unsigned char *string, unsigned char *key, size_t n)
 {
     unsigned int i;
     size_t ksize;
-    ksize = strlen((char*) key);
+    ksize = strlen((char *) key);
     i = 0;
-    while (n --> 0) {
+    while (n -- > 0) {
         *string ^= key[i++];
         string++;
         if (i >= ksize)
@@ -304,6 +297,8 @@ int hamming_char(unsigned char c1, unsigned char c2)
         hamming += ((c1 & BITS[i]) == BITS[i]);
     return hamming;
 }
+
+
 
 
 
