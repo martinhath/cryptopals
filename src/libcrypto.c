@@ -31,6 +31,8 @@ static int rate_string(unsigned char *str, size_t n)
     for (i = 0; i < n; i++) {
         switch (str[i]) {
         case ' ':
+            score += 7;
+            break;
         case 'a':
         case 'e':
         case 's':
@@ -71,6 +73,7 @@ unsigned char break_singlechar_xor(const unsigned char *string, size_t n)
             max_score = try_score;
         }
     }
+    free(xor_bytes);
     return key;
 }
 
@@ -298,10 +301,4 @@ int hamming_char(unsigned char c1, unsigned char c2)
         hamming += ((c1 & BITS[i]) == BITS[i]);
     return hamming;
 }
-
-
-
-
-
-
 

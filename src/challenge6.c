@@ -2,6 +2,7 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 
 #define BUFFER_SIZE 4096
 
@@ -11,7 +12,7 @@ int find_keysize(unsigned char *);
 int main()
 {
     char input[BUFFER_SIZE];
-    unsigned char *bstring;
+    unsigned char *bstring, *keys;
     unsigned char **splitstrings, **tstrings;
     int keysize, i, size, j, num_trans;
     i = read_input(input);
@@ -40,9 +41,6 @@ int main()
     splitstrings = calloc(num_trans, sizeof(unsigned char *));
     for (i = 0; i < num_trans; i++) {
         splitstrings[i] = bstring + i * keysize;
-        /* for (j = 0; j < keysize; j++)*/
-        /* printf("%.2x ", splitstrings[i][j]);*/
-        /* printf("\n");*/
     }
     /* Now transpose the blocks: make a block that is the first
      * byte of every block, and a block that is the second byte
@@ -56,11 +54,21 @@ int main()
     }
     /* Solve each block as if it was single-character XOR.
      * You already have code to do this.*/
-
-
+    keys = malloc(keysize * sizeof(unsigned char) + 1);
+    for (i = 0; i < keysize; i++){
+        *keys++ = break_singlechar_xor(tstrings[i], strlen((char*)tstrings[i]));
+    }
+    keys-= keysize;
+    keys[keysize] = 0;
     /* For each block, the single-byte XOR key that produces
      * the best looking histogram is the repeating-key XOR key
      * byte for that block. Put them together and you have the key.*/
+    /*decrypt_repeat_xor()*/
+
+    decrypt_repeat_xor(bstring, keys, size);
+    for (i = 0; i < size; i++){
+        printf("%c",bstring[i]);
+    }
     return 0;
 }
 
