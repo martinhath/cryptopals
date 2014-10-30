@@ -15,6 +15,73 @@
 
 
 /**
+ * Breaks single character xor encoding of the 
+ * supplied string. Brute force, trying every
+ * of the 256 chars. 
+ * 
+ * @param Encoded string
+ * @param Length of the string
+ * @return Most likely key
+ */
+unsigned char break_singlechar_xor(const unsigned char *string, size_t n)
+{
+    unsigned char key, chr, *xor_bytes;
+    unsigned int i;
+    int try_score, max_score;
+
+    xor_bytes = malloc(n * sizeof(unsigned char));
+    key = 0;
+    max_score = 0;
+    for (chr = 0; chr != 255; chr++)
+    {
+        for (i = 0; i < n; i++)
+        {
+            xor_bytes[i] = string[i] ^ chr;
+        }
+        if ((try_score = rate_string(xor_bytes, n)) > max_score)
+        {
+            key = chr;
+            max_score = try_score;
+        }
+    }
+    return key;
+}
+
+/**
+ * Helper function for break_singlechar_xor.
+ * Rates a string. Higher rating means more likely
+ * to contain real words and sentences.
+ *
+ * @param String to be rated
+ * @param Length of string
+ * @return Rating
+ */
+static int rate_string(unsigned char* str, size_t n)
+{
+    unsigned int i;
+    int score;
+    score = 0;
+    for (i = 0; i < n; i++)
+    {
+        switch (str[i])
+        {
+        case ' ':
+        case 'a':
+        case 'e':
+        case 's':
+            score += 5;
+            break;
+        case 'i':
+        case 'c':
+        case 'h':
+            score += 2;
+            break;
+        }
+    }
+    return score;
+}
+
+/**
  * Decrypts a repeated XOR string with the supplied key.
  * The encrypted string will be destroyed, and replaced
  * with the resulting string.
@@ -27,9 +94,9 @@
  */
 int decrypt_repeat_xor(unsigned char *string, unsigned char *key, size_t n)
 {
-    int i;
+    unsigned int i;
     size_t ksize;
-    ksize = strlen(key);
+    ksize = strlen((char*) key);
     i = 0;
     while (n --> 0) {
         *string ^= key[i++];

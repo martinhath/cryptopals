@@ -52,12 +52,12 @@ int main()
         tstrings[i] = malloc(sizeof(unsigned char) * num_trans);
         for (j = 0; j < num_trans; j++) {
             tstrings[i][j] = splitstrings[j][i];
-            printf("%.2x", tstrings[i][j]);
         }
-        printf("\n");
     }
     /* Solve each block as if it was single-character XOR.
      * You already have code to do this.*/
+
+
     /* For each block, the single-byte XOR key that produces
      * the best looking histogram is the repeating-key XOR key
      * byte for that block. Put them together and you have the key.*/
