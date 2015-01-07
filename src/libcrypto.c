@@ -48,6 +48,7 @@ static int rate_string(unsigned char *str, size_t n)
     return score;
 }
 
+
 /**
  * Breaks single character xor encoding of the
  * supplied string. Brute force, trying every
