@@ -198,6 +198,7 @@ char base64tonum(char c)
     if (c >= 'a') return c - 'a' + 26;
     if (c >= 'A') return c - 'A';
     if (c >= '0') return c - '0' + 52;
+    if (c == '\n' || c == '\r' || c == '\0') return -1;
     fprintf(stderr, "%s %c (%d)\n", "Error! char not base64:", c, c);
     return -1;
 }

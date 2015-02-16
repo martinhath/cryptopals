@@ -18,5 +18,6 @@ lib:
 	
 $(CHALLENGES):
 	$(CC) $(FLAGS) $(LIBS) -o bin/challenge$@ src/challenge$@.c 
+	bin/challenge$@.sh > output
 
 .PHONY: lib

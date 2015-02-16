@@ -6,15 +6,15 @@
 
 #define BUFFER_SIZE 4096
 
-int read_input(char *);
-int find_keysize(unsigned char *);
+size_t read_input(char *);
+size_t find_keysize(unsigned char *);
 
 int main()
 {
     char input[BUFFER_SIZE];
     unsigned char *bstring, *keys;
     unsigned char **splitstrings, **tstrings;
-    int keysize, i, size, j, num_trans;
+    size_t keysize, i, size, j, num_trans;
     i = read_input(input);
     size = 3 * i / 4;
     keysize = i - 1;
@@ -63,35 +63,37 @@ int main()
     decrypt_repeat_xor(bstring, keys, size);
     for (i = 0; i < size; i++)
         printf("%c", bstring[i]);
+    printf("\n");
     return 0;
 }
 
-int read_input(char *input)
+size_t read_input(char *input)
 {
     char c;
-    int i = 0;
-    while ((c = getchar()) != EOF)
+    size_t i = 0;
+    while ((c = (char) getchar()) != EOF)
         input[i++] = c;
     i--;
     input[i] = 0;
     return i;
 }
 
-int find_keysize(unsigned char *bstring)
+size_t find_keysize(unsigned char *bstring)
 {
-    int keysize, keysize_cand;
-    float keysize_norm, keysize_norm_max;
-    keysize_norm_max = 0;
+    size_t keysize, keysize_cand;
+    float keysize_norm, keysize_norm_min;
+    keysize_norm_min = 0;
     keysize_cand = 2;
     for (keysize = 2; keysize <= 40; keysize++) {
-        keysize_norm = ((float) hamming(bstring, bstring + keysize, keysize)) / keysize;
-        printf("Keysize: %d\tKeysize_norm: %3f\n", keysize, keysize_norm);
-        if (keysize_norm > keysize_norm_max) {
-            keysize_norm_max = keysize_norm;
+        keysize_norm = hamming(bstring, bstring +
+                        keysize, keysize) / (float)  keysize;
+        printf("Keysize: %zu\tKeysize_norm: %3f\n", keysize, keysize_norm);
+        if (keysize_norm < keysize_norm_min) {
+            keysize_norm_min = keysize_norm;
             keysize_cand = keysize;
         }
     }
-    printf("Keysize: %d\n", keysize_cand);
+    printf("Keysize: %zu\n", keysize_cand);
     return keysize_cand;
 }
 
