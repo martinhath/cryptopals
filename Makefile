@@ -1,12 +1,14 @@
-CC = gcc
-FLAGS = -Wall -Wextra -pedantic -g -O 
+CC = clang
+FLAGS = -Weverything -g -O 
 LIBS = -L$(shell pwd)/lib -lcrypto -Wl,-rpath=$(shell pwd)/lib
 LIB_SRC = src/libcrypto.c
 LIB_FLAGS = -fPIC
 CHALLENGES = 3 6
 
 all:
-	echo "Huheue"
+	@echo "Usage:"
+	@echo -e "Make lib\t\tfor creating the library."
+	@echo -e "Make [challenge]\tfor creating challenge executables."
 
 lib: 
 	$(CC) $(FLAGS) $(LIB_FLAGS) $(LIB_SRC) -c -o libcrypto.o;

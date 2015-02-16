@@ -4,10 +4,11 @@
 #include <stddef.h>
 
 unsigned char char_to_byte(unsigned char);
-unsigned char str_to_char(const char*);
+unsigned char str_to_byte(const char*);
 size_t str_to_bytes(const char*, unsigned char*, size_t);
 
-char numtobase64(size_t);
+char numtobase64(char);
+char base64tonum(char);
 
 char* byteatobase64a(unsigned char*, size_t, char*);
 unsigned char* base64tobstring(char*, size_t, unsigned char*);
