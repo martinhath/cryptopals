@@ -5,18 +5,14 @@
 
 int main()
 {
-    int i, j, k;
-    char *b64, *bytestr;
-
-    b64 = malloc(sizeof(char) * 6);
-    bytestr = malloc(sizeof(char) * 6);
-
-    byteatobase64a("Manmax", 6, b64);
-
-    base64tobstring(b64, 6, bytestr);
-    bytestr[6] = 0;
-
-    printf("%s\n", bytestr);
+    unsigned char str[] = {0x1d, 0x42, 0x1f};
+    char ord[4] = {};
+    byteatobase64a(str, 4, ord);
+    for (int i = 0; i < 4; i++){
+        printf(".%c.", ord[i]);
+    }
+    printf("\n");
+    printf("%s\n", ord);
 }
 
 

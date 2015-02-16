@@ -8,6 +8,7 @@
 
 #include "libcrypto.h"
 
+#include <ctype.h>
 #include <stddef.h>
 #include <stdlib.h>
 #include <stdio.h>
@@ -44,6 +45,8 @@ static int rate_string(unsigned char *str, size_t n)
             score += 2;
             break;
         }
+        if (!isalnum(str[i]))
+            score--;
     }
     return score;
 }
@@ -224,6 +227,10 @@ char *byteatobase64a(unsigned char *array, size_t n, char *b64)
         for (j = 0; j < 4; j++)
             b64[j + (4 * i) / 3] = numtobase64((tmp >> (18 - j * 6)) & 63);
     }
+    j = i - n;
+    while (j-- > 0)
+        b64[(j) + (4 * n + 2) / 3] = '=';
+
     return b64;
 }
 
@@ -241,7 +248,7 @@ unsigned char *base64tobstring(char *b64string, size_t n, unsigned char *array)
     size_t i, j, index;
     int tmp;
     unsigned char num;
-    for (i = 0; i < n; i += 4) {
+    for (i = 0; i < n-4; i += 4) {
         tmp = (base64tonum(b64string[i]) << 18) +
               (base64tonum(b64string[i + 1]) << 12) +
               (base64tonum(b64string[i + 2]) << 6) +
@@ -250,8 +257,10 @@ unsigned char *base64tobstring(char *b64string, size_t n, unsigned char *array)
             index = j + (3 * i) / 4;
             num = (tmp >> (16 - j * 8) & 0xff);
             array[index] = num;
+            printf("%02x ", num);
         }
     }
+    // We have at most 4 chars left.
     return array;
 }
 

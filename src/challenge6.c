@@ -11,7 +11,7 @@ size_t find_keysize(unsigned char *);
 
 int main()
 {
-    char input[BUFFER_SIZE];
+    char input[BUFFER_SIZE] = {};
     unsigned char *bstring, *keys;
     unsigned char **splitstrings, **tstrings;
     size_t keysize, i, size, j, num_trans;
@@ -21,6 +21,20 @@ int main()
     bstring = calloc(size, sizeof(unsigned char));
 
     base64tobstring(input, i, bstring);
+    printf("huehue\n");
+    for (int a = 0; a < size; a++){
+        printf("%02x", bstring[a]);
+    }
+    printf("\n");
+    printf("huehue\n");
+    /*i += 2;*/
+    /*char* hurr = malloc(i * sizeof(char));*/
+    /*byteatobase64a(bstring, i, hurr);*/
+    /*for (int j = 0; j < i; j++){*/
+    /*printf("%c", hurr[i]);*/
+    /*}*/
+    /*printf("\n");*/
+    /*i -= 2;*/
     /* For each KEYSIZE, take the first KEYSIZE worth of bytes,
      * and the second KEYSIZE worth of bytes, and find the edit
      * distance between them. Normalize this result by dividing
@@ -28,7 +42,8 @@ int main()
      * distance is probably the key. You could proceed perhaps
      * with the smallest 2-3 KEYSIZE values. Or take 4 KEYSIZE
      * blocks instead of 2 and average the distances.*/
-    keysize = find_keysize(bstring);
+    /*keysize = find_keysize(bstring);*/
+    keysize = 22;
     /* Resize the size of bstring so its a multiple
      * of the key size.*/
     j = (size / keysize + 1) * keysize - 1;
@@ -57,25 +72,13 @@ int main()
     keys = malloc(keysize * sizeof(unsigned char) + 1);
     for (i = 0; i < keysize; i++){
         *keys++ = break_singlechar_xor(tstrings[i], num_trans);
-        /*printf("String: ");*/
-        /*for (j = 0; j < num_trans; j++){*/
-        /*printf("%02x ", tstrings[i][j]);*/
-        /*}*/
-        /*printf("\n\nKey: ");*/
-        /*printf("%02x\n\n", *(keys-1));*/
     }
-    /*printf("\n\n");*/
     keys -= keysize;
     keys[keysize] = '\0';
     /* For each block, the single-byte XOR key that produces
      * the best looking histogram is the repeating-key XOR key
      * byte for that block. Put them together and you have the key.*/
     decrypt_repeat_xor(bstring, keys, size);
-    for (i = 0; i < size; i++){
-        char c = bstring[i];
-        if (c == ' ') continue;
-        printf("%c", c);
-    }
     for (i = 0; i < size; i++)
         printf("%c", bstring[i]);
     printf("\n");

@@ -3,7 +3,7 @@ FLAGS = -Weverything -g -O
 LIBS = -L$(shell pwd)/lib -lcrypto -Wl,-rpath=$(shell pwd)/lib
 LIB_SRC = src/libcrypto.c
 LIB_FLAGS = -fPIC
-CHALLENGES = 3 6
+CHALLENGES = 3 5 6
 
 all:
 	@echo "Usage:"
