@@ -239,13 +239,13 @@ char *byteatobase64a(unsigned char *array, size_t n, char *b64)
 unsigned char *base64tobstring(char *b64string, size_t n, unsigned char *array)
 {
     size_t i, j, index;
-    unsigned char num, tmp;
+    int tmp;
+    unsigned char num;
     for (i = 0; i < n; i += 4) {
-        tmp = (unsigned char)(
-              (base64tonum(b64string[i]) << 18) +
+        tmp = (base64tonum(b64string[i]) << 18) +
               (base64tonum(b64string[i + 1]) << 12) +
               (base64tonum(b64string[i + 2]) << 6) +
-              (base64tonum(b64string[i + 3])));
+              (base64tonum(b64string[i + 3]));
         for (j = 0; j < 3; j++) {
             index = j + (3 * i) / 4;
             num = (tmp >> (16 - j * 8) & 0xff);

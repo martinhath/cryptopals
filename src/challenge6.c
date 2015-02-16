@@ -19,6 +19,7 @@ int main()
     size = 3 * i / 4;
     keysize = i - 1;
     bstring = calloc(size, sizeof(unsigned char));
+
     base64tobstring(input, i, bstring);
     /* For each KEYSIZE, take the first KEYSIZE worth of bytes,
      * and the second KEYSIZE worth of bytes, and find the edit
@@ -39,12 +40,13 @@ int main()
      * ciphertext into blocks of KEYSIZE length.*/
     num_trans = size / keysize + 1;
     splitstrings = calloc(num_trans, sizeof(unsigned char *));
-    for (i = 0; i < num_trans; i++)
+    for (i = 0; i < num_trans; i++){
         splitstrings[i] = bstring + i * keysize;
+    }
     /* Now transpose the blocks: make a block that is the first
      * byte of every block, and a block that is the second byte
      * of every block, and so on.*/
-    tstrings = calloc(sizeof(unsigned char *) * keysize, 0);
+    tstrings = calloc(keysize, sizeof(unsigned char *));
     for (i = 0; i < keysize; i++) {
         tstrings[i] = malloc(sizeof(unsigned char) * num_trans);
         for (j = 0; j < num_trans; j++)
@@ -53,14 +55,27 @@ int main()
     /* Solve each block as if it was single-character XOR.
      * You already have code to do this.*/
     keys = malloc(keysize * sizeof(unsigned char) + 1);
-    for (i = 0; i < keysize; i++)
-        *keys++ = break_singlechar_xor(tstrings[i], strlen((char *)tstrings[i]));
+    for (i = 0; i < keysize; i++){
+        *keys++ = break_singlechar_xor(tstrings[i], num_trans);
+        /*printf("String: ");*/
+        /*for (j = 0; j < num_trans; j++){*/
+        /*printf("%02x ", tstrings[i][j]);*/
+        /*}*/
+        /*printf("\n\nKey: ");*/
+        /*printf("%02x\n\n", *(keys-1));*/
+    }
+    /*printf("\n\n");*/
     keys -= keysize;
-    keys[keysize] = 0;
+    keys[keysize] = '\0';
     /* For each block, the single-byte XOR key that produces
      * the best looking histogram is the repeating-key XOR key
      * byte for that block. Put them together and you have the key.*/
     decrypt_repeat_xor(bstring, keys, size);
+    for (i = 0; i < size; i++){
+        char c = bstring[i];
+        if (c == ' ') continue;
+        printf("%c", c);
+    }
     for (i = 0; i < size; i++)
         printf("%c", bstring[i]);
     printf("\n");
@@ -81,12 +96,17 @@ size_t read_input(char *input)
 size_t find_keysize(unsigned char *bstring)
 {
     size_t keysize, keysize_cand;
-    float keysize_norm, keysize_norm_min;
-    keysize_norm_min = 0;
+    float keysize_norm, keysize_norm2, keysize_norm_min;
+    keysize_norm_min = 99;
     keysize_cand = 2;
     for (keysize = 2; keysize <= 40; keysize++) {
         keysize_norm = hamming(bstring, bstring +
-                        keysize, keysize) / (float)  keysize;
+                keysize, keysize) / (float)  keysize;
+        /*keysize_norm = hamming(bstring, bstring + keysize, keysize);*/
+        /*keysize_norm2 = hamming(bstring + 2*keysize,*/
+        /*bstring + 3*keysize, keysize);*/
+        /*keysize_norm = (keysize_norm + keysize_norm2)/(keysize*2.0);*/
+
         printf("Keysize: %zu\tKeysize_norm: %3f\n", keysize, keysize_norm);
         if (keysize_norm < keysize_norm_min) {
             keysize_norm_min = keysize_norm;
