@@ -25,7 +25,7 @@
  * @param n Length of string
  * @return Rating
  */
-static int rate_string(unsigned char *str, size_t n)
+static int rate_string(byte *str, size_t n)
 {
     unsigned int i;
     int score;
@@ -62,12 +62,12 @@ static int rate_string(unsigned char *str, size_t n)
  * @param n Length of the string
  * @return Most likely key
  */
-unsigned char break_singlechar_xor(const unsigned char *string, size_t n)
+byte break_singlechar_xor(const byte *string, size_t n)
 {
-    unsigned char key, chr, *xor_bytes;
+    byte key, chr, *xor_bytes;
     unsigned int i;
     int try_score, max_score;
-    xor_bytes = malloc(n * sizeof(unsigned char));
+    xor_bytes = malloc(n * sizeof(byte));
     key = 0;
     max_score = INT_MIN;
     for (chr = 0; chr != 255; chr++) {
@@ -94,7 +94,7 @@ unsigned char break_singlechar_xor(const unsigned char *string, size_t n)
  * @param n Length of string
  * @return 0 on success, any other value on failure.
  */
-int decrypt_repeat_xor(unsigned char *string, unsigned char *key, size_t n)
+int decrypt_repeat_xor(byte *string, byte *key, size_t n)
 {
     unsigned int i;
     size_t ksize;
@@ -114,7 +114,7 @@ int decrypt_repeat_xor(unsigned char *string, unsigned char *key, size_t n)
  * @param c Char to be converted
  * @return Converted char
  */
-unsigned char char_to_byte(unsigned char c)
+byte char_to_byte(byte c)
 {
     if ('A' <= c && c <= 'F')
         return c - 'A' + 10;
@@ -134,7 +134,7 @@ unsigned char char_to_byte(unsigned char c)
  * @param string The string containing one byte.
  * @return The byte.
  */
-unsigned char str_to_byte(const char *string)
+byte str_to_byte(const char *string)
 {
     return char_to_byte((unsigned const char) *string) * 0x10 +
            char_to_byte((unsigned const char) *(string + 1));
@@ -154,7 +154,7 @@ unsigned char str_to_byte(const char *string)
  * @return The number of bytes written (since you could
  * potentially write '\0', thus terminating the string).
  */
-size_t str_to_bytes(const char *string, unsigned char *target, size_t n)
+size_t str_to_bytes(const char *string, byte *target, size_t n)
 {
     size_t i;
     char *str = NULL;
@@ -219,7 +219,7 @@ char base64tonum(char c)
  * be of size >= ceil(len/3)*4.
  * @return Pointer to the base64 array
  */
-char *byteatobase64a(unsigned char *array, size_t n, char *b64)
+char *byteatobase64a(byte *array, size_t n, char *b64)
 {
     size_t i, j;
     int tmp;
@@ -244,11 +244,11 @@ char *byteatobase64a(unsigned char *array, size_t n, char *b64)
  * Size is assumed to be >= 3*strlen(b64)/4
  * @return Returns length of decoded string
  */
-size_t base64tobstring(const char *b64string, size_t n, unsigned char *array)
+size_t base64tobstring(const char *b64string, size_t n, byte *array)
 {
     size_t i, j, index;
     int tmp;
-    unsigned char num;
+    byte num;
     for (i = 0; i < n-3; i += 4) {
         tmp = (base64tonum(b64string[i]) << 18) +
               (base64tonum(b64string[i + 1]) << 12) +
@@ -276,8 +276,8 @@ size_t base64tobstring(const char *b64string, size_t n, unsigned char *array)
  * @param target Array to store the XOR in
  * @return n Pointer to target array
  */
-unsigned char  *xor_array(unsigned char *a1, unsigned char *a2,
-                          unsigned char *target, size_t n)
+byte  *xor_array(byte *a1, byte *a2,
+                          byte *target, size_t n)
 {
     size_t i;
     for (i = 0; i < n; i++)
@@ -294,7 +294,7 @@ unsigned char  *xor_array(unsigned char *a1, unsigned char *a2,
  * @param n Length of both strings
  * @return Hamming distance
  */
-int hamming(unsigned char *s1, unsigned char *s2, size_t n)
+int hamming(byte *s1, byte *s2, size_t n)
 {
     size_t i;
     int hamming;
@@ -311,9 +311,9 @@ int hamming(unsigned char *s1, unsigned char *s2, size_t n)
  * @param c2 Second char
  * @return Hamming distance
  */
-int hamming_char(unsigned char c1, unsigned char c2)
+int hamming_char(byte c1, byte c2)
 {
-    static unsigned char BITS[8] = {1, 2, 4, 8, 16, 32, 64, 128};
+    static byte BITS[8] = {1, 2, 4, 8, 16, 32, 64, 128};
     int i, hamming;
     hamming = 0;
     c1 ^= c2;
