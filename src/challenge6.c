@@ -1,5 +1,6 @@
 #include "libcrypto.h"
 
+#include <limits.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -11,7 +12,7 @@ size_t find_keysize(unsigned char *);
 
 int main()
 {
-    char input[BUFFER_SIZE] = {};
+    char input[BUFFER_SIZE];
     unsigned char *bstring, *keys;
     unsigned char **splitstrings, **tstrings;
     size_t keysize, i, size, j, num_trans;
@@ -20,9 +21,9 @@ int main()
     keysize = i - 1;
     bstring = calloc(size, sizeof(unsigned char));
 
-    base64tobstring(input, i, bstring);
+    size = base64tobstring(input, i, bstring);
     printf("huehue\n");
-    for (int a = 0; a < size; a++){
+    for (size_t a = 0; a < size; a++){
         printf("%02x", bstring[a]);
     }
     printf("\n");
@@ -99,9 +100,10 @@ size_t read_input(char *input)
 size_t find_keysize(unsigned char *bstring)
 {
     size_t keysize, keysize_cand;
-    float keysize_norm, keysize_norm2, keysize_norm_min;
-    keysize_norm_min = 99;
+    float keysize_norm, keysize_norm_min;
+    keysize_norm_min = INT_MAX;
     keysize_cand = 2;
+
     for (keysize = 2; keysize <= 40; keysize++) {
         keysize_norm = hamming(bstring, bstring +
                 keysize, keysize) / (float)  keysize;

@@ -241,9 +241,9 @@ char *byteatobase64a(unsigned char *array, size_t n, char *b64)
  * @param n Size of the Base64 string
  * @param array Target array to store the byte string in.
  * Size is assumed to be >= 3*strlen(b64)/4
- * @return Pointer to the target array
+ * @return Returns length of decoded string
  */
-unsigned char *base64tobstring(char *b64string, size_t n, unsigned char *array)
+size_t base64tobstring(char *b64string, size_t n, unsigned char *array)
 {
     size_t i, j, index;
     int tmp;
@@ -262,9 +262,9 @@ unsigned char *base64tobstring(char *b64string, size_t n, unsigned char *array)
     size_t numeq = 0;
     while (b64string[--n] == '=')
         numeq++;
-    printf("numeq: %d\n", numeq);
-    array[(3 * i) / 4 - numeq] = '\0';
-    return array;
+    size_t len = (3 * i) / 4 - numeq;
+    array[len] = '\0';
+    return len;
 }
 
 /**

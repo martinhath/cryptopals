@@ -11,7 +11,7 @@ char numtobase64(char);
 char base64tonum(char);
 
 char* byteatobase64a(unsigned char*, size_t, char*);
-unsigned char* base64tobstring(char*, size_t, unsigned char*);
+size_t base64tobstring(char*, size_t, unsigned char*);
 
 unsigned char* xor_array(unsigned char*, unsigned char*, unsigned char*, size_t);
 
