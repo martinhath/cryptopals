@@ -8,6 +8,7 @@
 
 #include "libcrypto.h"
 
+#include <limits.h>
 #include <ctype.h>
 #include <stddef.h>
 #include <stdlib.h>
@@ -46,7 +47,7 @@ static int rate_string(unsigned char *str, size_t n)
             break;
         }
         if (!isalnum(str[i]))
-            score--;
+            score -= 4;
     }
     return score;
 }
@@ -68,7 +69,7 @@ unsigned char break_singlechar_xor(const unsigned char *string, size_t n)
     int try_score, max_score;
     xor_bytes = malloc(n * sizeof(unsigned char));
     key = 0;
-    max_score = 0;
+    max_score = INT_MIN;
     for (chr = 0; chr != 255; chr++) {
         for (i = 0; i < n; i++)
             xor_bytes[i] = string[i] ^ chr;
@@ -243,7 +244,7 @@ char *byteatobase64a(unsigned char *array, size_t n, char *b64)
  * Size is assumed to be >= 3*strlen(b64)/4
  * @return Returns length of decoded string
  */
-size_t base64tobstring(char *b64string, size_t n, unsigned char *array)
+size_t base64tobstring(const char *b64string, size_t n, unsigned char *array)
 {
     size_t i, j, index;
     int tmp;
