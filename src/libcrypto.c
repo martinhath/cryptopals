@@ -248,7 +248,7 @@ unsigned char *base64tobstring(char *b64string, size_t n, unsigned char *array)
     size_t i, j, index;
     int tmp;
     unsigned char num;
-    for (i = 0; i < n-4; i += 4) {
+    for (i = 0; i < n-3; i += 4) {
         tmp = (base64tonum(b64string[i]) << 18) +
               (base64tonum(b64string[i + 1]) << 12) +
               (base64tonum(b64string[i + 2]) << 6) +
@@ -257,10 +257,13 @@ unsigned char *base64tobstring(char *b64string, size_t n, unsigned char *array)
             index = j + (3 * i) / 4;
             num = (tmp >> (16 - j * 8) & 0xff);
             array[index] = num;
-            printf("%02x ", num);
         }
     }
-    // We have at most 4 chars left.
+    size_t numeq = 0;
+    while (b64string[--n] == '=')
+        numeq++;
+    printf("numeq: %d\n", numeq);
+    array[(3 * i) / 4 - numeq] = '\0';
     return array;
 }
 

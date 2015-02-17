@@ -1,5 +1,5 @@
 CC = clang
-FLAGS = -Weverything -g -O 
+FLAGS = -Weverything -g 
 LIBS = -L$(shell pwd)/lib -lcrypto -Wl,-rpath=$(shell pwd)/lib
 LIB_SRC = src/libcrypto.c
 LIB_FLAGS = -fPIC
@@ -15,9 +15,17 @@ lib:
 	$(CC) $(FLAGS) $(LIB_FLAGS) $(LIB_SRC) -c -o libcrypto.o;
 	gcc -shared -Wl,-soname,libcrypto.so -o lib/libcrypto.so libcrypto.o;
 	rm libcrypto.o;
+
+test: lib
+	@$(CC) $(FLAGS) $(LIBS) tests/test.c -o test 2> /dev/null
+	@./test
+
 	
-$(CHALLENGES):
+$(CHALLENGES): lib
 	$(CC) $(FLAGS) $(LIBS) -o bin/challenge$@ src/challenge$@.c 
 	bin/challenge$@.sh > output
 
-.PHONY: lib
+clean:
+	ls **/*.o
+
+.PHONY: lib test
