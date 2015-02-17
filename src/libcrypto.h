@@ -3,6 +3,8 @@
 
 #include <stddef.h>
 
+typedef unsigned char byte;
+
 unsigned char char_to_byte(unsigned char);
 unsigned char str_to_byte(const char*);
 size_t str_to_bytes(const char*, unsigned char*, size_t);
