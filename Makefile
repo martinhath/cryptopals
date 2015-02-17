@@ -1,5 +1,5 @@
 CC = clang
-FLAGS = -Weverything -g 
+FLAGS = -Weverything -g -O2
 LIBS = -L$(shell pwd)/lib -lcrypto -Wl,-rpath=$(shell pwd)/lib
 LIB_SRC = src/libcrypto.c
 LIB_FLAGS = -fPIC
@@ -20,9 +20,13 @@ test: lib
 	@$(CC) $(FLAGS) $(LIBS) tests/test.c -o test 2> /dev/null
 	@./test
 
-	
 $(CHALLENGES): lib
 	$(CC) $(FLAGS) $(LIBS) -o bin/challenge$@ src/challenge$@.c 
+	bin/challenge$@.sh > output
+
+# All challenges that require special treatment
+6:
+	$(CC) $(FLAGS) $(LIBS) -o bin/challenge6 src/tuple.c src/challenge6.c 
 	bin/challenge$@.sh > output
 
 clean:
