@@ -6,7 +6,7 @@
  * Matasano crypto challenge.
  */
 
-#include "libcrypto.h"
+#include "libhcrypto.h"
 
 #include <limits.h>
 #include <ctype.h>
