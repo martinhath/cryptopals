@@ -15,6 +15,7 @@ all:
 	@echo "Usage:"
 	@echo -e "Make lib\t\tfor creating the library."
 	@echo -e "Make [challenge]\tfor creating challenge executables."
+	@echo -e "Make test\t\tfor running the tests (see tests/)."
 
 lib:
 	@mkdir -p lib
@@ -34,7 +35,7 @@ $(CHALLENGES): lib
 $(CHALLENGES_INPUT): lib
 	$(CC) $(FLAGS) $(LIBS) -o bin/challenge$@ $(FILES) src/challenge$@.c
 	@echo ""
-	@bin/challenge$@ < data/$@ # > output
+	@bin/challenge$@ < data/$@ > output
 
 
 clean:
