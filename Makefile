@@ -1,5 +1,5 @@
 CC = clang
-FLAGS = -Weverything -g -O2
+FLAGS = -Weverything -g #-O2
 LIBS = -L$(shell pwd)/lib -lssl -lcrypto -lhcrypto -Wl,-rpath=$(shell pwd)/lib
 
 LIB_SRC = src/libhcrypto.c

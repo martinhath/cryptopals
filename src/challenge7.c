@@ -6,67 +6,72 @@
 #include <openssl/evp.h>
 #include <openssl/crypto.h>
 
-#define BUFFER_SIZE 8192
+#define BUFFER_SIZE 1024
 
-size_t read_input(char*, size_t);
+size_t read_input(char *, size_t);
 
 static const char *KEY = "YELLOW SUBMARINE";
 
-int main(){
-    char input[BUFFER_SIZE];
+size_t read_input(char *input, size_t size)
+{
+    int c;
+    size_t i = 0;
+    while (i < size &&
+            (c = getchar()) != EOF)
+        input[i++] = (char) c;
+    return i;
+}
 
-    size_t len = read_input(input, BUFFER_SIZE);
-    if (len == BUFFER_SIZE){
-        fprintf(stderr, "Error: Whole file was not read.\n");
-        exit(27); // EFBIG - File too large
-    }
-
-    byte *outbytes = calloc(len, 1);
-    int outlen = len;
-
-    byte *bytes = calloc(len, 1);
-    len = base64tobstring(input, len, bytes);
-
-    // horrible hack!!
-    len = (len/16)*16 + 16;
-    /** EVP_CipherUpdate would only read in blocks of 
-     * 16 bytes. Setting `len` to the closest
-     * 16 multiple, padds the input with zeroes at the 
-     * end (as we're using `calloc`).
+int main()
+{
+    /**
+     * Strategy:
+     * we want to read a chuck from a file, and
+     * convert it from base64. The new byte chunk
+     * will be of length (3*SIZE)/4.
+     * With SIZE = 1024, the length of the
+     * converted string is 768.
+     *
+     * Then, for each string, we decrypt it
+     * using openssl, and print it to stdout.
+     *
+     * As we're using ECB, we need the string length
+     * to be a multiple of the key length, which it
+     * is with SIZE = 1024 (16*48 = 768).
      */
-
-
+    char input[BUFFER_SIZE];
+    byte encrypted[(BUFFER_SIZE * 3) / 4];
+    byte decrypted[(BUFFER_SIZE * 3) / 4];
+    int decrypt_len;
+    
     EVP_CIPHER_CTX ctx;
     EVP_CIPHER_CTX_init(&ctx);
+    
     EVP_CipherInit_ex(&ctx, EVP_aes_128_ecb(), NULL, NULL, NULL, 0);
     OPENSSL_assert(EVP_CIPHER_CTX_key_length(&ctx) == 16);
-    //OPENSSL_assert(EVP_CIPHER_CTX_iv_length(&ctx) == 0);
     
-    EVP_CipherInit_ex(&ctx, NULL, NULL, KEY, NULL, 0);
-
-    while (1) 
-    {
-        // infinite loop.
-        // TODO: read from file n bytes at a time.
-        int ret = EVP_CipherUpdate(&ctx, outbytes, &outlen, bytes, len);
-        if (outlen == 0) break;
-        if(!ret){
+    EVP_CipherInit_ex(&ctx, NULL, NULL, (const unsigned char*) KEY, NULL, 0);
+    
+    while (1) {
+        size_t input_len = read_input(input, BUFFER_SIZE);
+        if (input_len == 0) break;
+        size_t encrypt_len = base64tobstring(input, input_len, encrypted);
+        
+        int ret = EVP_CipherUpdate(&ctx, decrypted, &decrypt_len,
+                                   encrypted, (int) encrypt_len);
+        if (!ret) {
             EVP_CIPHER_CTX_cleanup(&ctx);
             return 0;
         }
-        for(size_t i = 0; i < outlen; i++)
-            printf("%c", outbytes[i]);
+        for (int i = 0; i < decrypt_len; i++)
+            printf("%c", decrypted[i]);
     }
-    printf("\n");
+    if (!EVP_CipherFinal_ex(&ctx, decrypted, &decrypt_len)) {
+        EVP_CIPHER_CTX_cleanup(&ctx);
+        return 0;
+    }
+    for (int i = 0; i < decrypt_len; i++)
+        printf("%c", decrypted[i]);
     return 0;
 }
 
-size_t read_input(char *input, size_t n)
-{
-    char c;
-    size_t i = 0;
-    while (i < n && (c = (char) getchar()) != EOF)
-        input[i++] = c;
-    input[i-1] = '\0';
-    return i;
-}
